@@ -78,10 +78,13 @@
     file:
       path: "{{ etcd_cert_config_dir }}"
       state: directory
+  - name: Copy to etcd host
+    copy:
+        src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
+        dest: "{{ etcd_cert_config_dir }}/"
+    when: etcd_server_certs_missing
   - name: Unarchive the tarball on the etcd host
-    unarchive:
-      src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
-      dest: "{{ etcd_cert_config_dir }}"
+    shell: "tar -xf {{ etcd_cert_config_dir }}/{{ etcd_cert_subdir }}.tgz -C {{ etcd_cert_config_dir }}/"
     when: etcd_server_certs_missing
   roles:
   - openshift_etcd
@@ -100,10 +103,13 @@
     file:
       path: "{{ etcd_cert_config_dir }}"
       state: directory
+  - name: Copy to etcd host
+    copy:
+        src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
+        dest: "{{ etcd_cert_config_dir }}/"
+    when: etcd_server_certs_missing
   - name: Unarchive the tarball on the etcd host
-    unarchive:
-      src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
-      dest: "{{ etcd_cert_config_dir }}"
+    shell: "tar -xf {{ etcd_cert_config_dir }}/{{ etcd_cert_subdir }}.tgz -C {{ etcd_cert_config_dir }}/"
     when: etcd_server_certs_missing
   roles:
   - openshift_etcd

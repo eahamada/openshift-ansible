@@ -104,10 +104,14 @@
     state: directory
   when: node_certs_missing | bool
 
-- name: Unarchive the tarball on the node
-  unarchive:
-    src: "{{ node_cert_mktemp.stdout }}/{{ openshift_node_cert_subdir }}.tgz"
-    dest: "{{ openshift_node_cert_dir }}"
+- name: Copy to etcd host
+  copy:
+      src: "{{ node_cert_mktemp.stdout }}/{{ openshift_node_cert_subdir }}.tgz"
+      dest: "{{ openshift_node_cert_dir }}/"
+  when: node_certs_missing | bool
+
+- name: Unarchive the tarball on the etcd host
+  shell: "tar -xf {{ openshift_node_cert_dir }}/{{ openshift_node_cert_subdir }}.tgz -C {{ openshift_node_cert_dir }}/"
   when: node_certs_missing | bool
 
 - file: name={{ node_cert_mktemp.stdout }} state=absent

@@ -39,7 +39,7 @@
   delegate_to: "{{ nuage_ca_master }}"
 
 - name: Extract the certificates
-  unarchive: src="{{ mktemp.stdout }}/{{ ansible_nodename }}.tgz" dest={{ nuage_master_crt_dir }}
+  unarchive: src="{{ mktemp.stdout }}/{{ ansible_nodename }}.tgz" dest="{{ nuage_master_crt_dir }}/"
 
 - name: Delete the certificates after copy
   file: path="{{ nuage_mon_rest_server_crt_dir }}" state=absent 

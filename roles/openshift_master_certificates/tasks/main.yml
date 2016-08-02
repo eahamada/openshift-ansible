@@ -93,7 +93,7 @@
     creates: "{{ openshift_master_generated_config_dir }}.tgz"
   when: master_certs_missing | bool and inventory_hostname != openshift_ca_host
   delegate_to: "{{ openshift_ca_host }}"
-
+  
 - name: Retrieve the master cert tarball from the master
   fetch:
     src: "{{ openshift_master_generated_config_dir }}.tgz"
@@ -110,10 +110,14 @@
     state: directory
   when: master_certs_missing | bool and inventory_hostname != openshift_ca_host
 
-- name: Unarchive the tarball on the master
-  unarchive:
+- name: Copy to etcd host
+  copy:
     src: "{{ g_master_mktemp.stdout }}/{{ openshift_master_cert_subdir }}.tgz"
-    dest: "{{ openshift_master_config_dir }}"
+    dest: "{{ openshift_master_config_dir }}/"
+  when: master_certs_missing | bool and inventory_hostname != openshift_ca_host
+
+- name: Unarchive the tarball on the etcd host
+  shell: "tar -xf {{ openshift_master_config_dir }}/{{ openshift_master_cert_subdir }}.tgz -C {{ openshift_master_config_dir }}/"
   when: master_certs_missing | bool and inventory_hostname != openshift_ca_host
 
 - file: name={{ g_master_mktemp.stdout }} state=absent

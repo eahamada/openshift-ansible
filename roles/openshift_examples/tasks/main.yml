@@ -27,11 +27,12 @@
     dest: "{{ examples_base }}"
     state: directory
     mode: 0755
-
-- name: Unarchive the OpenShift examples on the remote
-  unarchive:
-    src: "{{ copy_examples_mktemp.stdout }}/openshift-examples.tar"
-    dest: "{{ examples_base }}/"
+- name: Copy to etcd host
+  copy:
+      src: "{{ copy_examples_mktemp.stdout }}/openshift-examples.tar"
+      dest: "{{ examples_base }}/"
+- name: Unarchive the tarball on the etcd host
+  shell: "tar -xf {{ examples_base }}/openshift-examples.tar -C {{ examples_base }}/"
 
 - name: Cleanup the OpenShift Examples temp dir
   become: False

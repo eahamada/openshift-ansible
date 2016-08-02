@@ -186,10 +186,13 @@
       path: "{{ openshift.common.config_base }}/node"
       state: directory
     when: etcd_client_flannel_certs_missing | default(false) | bool
+  - name: Copy to host
+    copy:
+        src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
+        dest: "{{ etcd_cert_config_dir }}/"
+    when: etcd_client_flannel_certs_missing | default(false) | bool
   - name: Unarchive the tarball on the master
-    unarchive:
-      src: "{{ sync_tmpdir }}/{{ etcd_cert_subdir }}.tgz"
-      dest: "{{ etcd_cert_config_dir }}"
+    shell: "tar -xf {{ etcd_cert_config_dir }}/{{ etcd_cert_subdir }}.tgz -C {{ etcd_cert_config_dir }}/"
     when: etcd_client_flannel_certs_missing | default(false) | bool
   - file:
       path: "{{ etcd_cert_config_dir }}/{{ item }}"
